@@ -1,0 +1,233 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. E. Poornima - Associate Professor - Department of CSE(AI&ML) - Gokaraju Rangaraju Institute of Engineering & Technology</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Smooth scrolling for anchor links */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom styles for publications list */
+    .publication-item {
+      transition: transform 0.2s;
+    }
+    .publication-item:hover {
+      transform: translateX(10px);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-800 text-white p-4 sticky top-0 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">Dr. E. Poornima</h1>
+      <ul class="flex space-x-6">
+        <li><a href="#about" class="hover:text-blue-300">About</a></li>
+        <li><a href="#research" class="hover:text-blue-300">Research</a></li>
+        <li><a href="#publications" class="hover:text-blue-300">Publications</a></li>
+        <li><a href="#teaching" class="hover:text-blue-300">Teaching</a></li>
+        <li><a href="#contact" class="hover:text-blue-300">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-blue-600 text-white py-20">
+    <div class="container mx-auto text-center">
+      <!-- Replace the src below with your hosted image URL (e.g., from Imgur or GitHub) -->
+      <img src="https://via.placeholder.com/150" alt="Profile Picture of Dr. E. Poornima" class="w-32 h-32 rounded-full mx-auto mb-4">
+      <h1 class="text-4xl font-bold mb-2">Dr. E. Poornima</h1>
+      <p class="text-lg">Associate Professor | Department of CSE (AI & ML) | Gokaraju Rangaraju Institute of Engineering & Technology, Hyderabad</p>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-6 text-center">About Me</h2>
+      <p class="text-lg leading-relaxed">
+        I am a dedicated researcher and educator in Computer Science, specializing in Artificial Intelligence and Machine Learning. My work focuses on advancing machine learning algorithms for real-world applications. With a Ph.D. from Jawaharlal Nehru Technological University Anantapur, I have 13 years of experience in academia and industry, contributing to advancements in AI-driven solutions. I am passionate about mentoring students and collaborating on interdisciplinary projects.
+      </p>
+    </div>
+  </section>
+
+  <!-- Research Interests Section -->
+  <section id="research" class="bg-gray-200 py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-6 text-center">Research Interests</h2>
+      <ul class="list-disc list-inside text-lg space-y-2">
+        <li>Artificial Intelligence and Data Science</li>
+        <li>Natural Language Processing</li>
+        <li>Cloud Computing</li>
+        <li>Wireless Networks</li>
+        <li>Network Security</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Publications Section -->
+  <section id="publications" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-6 text-center">Selected Publications</h2>
+      <div class="mb-4 text-center">
+        <button id="sort-year" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sort by Year (Newest)</button>
+      </div>
+      <ul id="publication-list" class="space-y-4">
+        <!-- Publications will be populated dynamically -->
+      </ul>
+    </div>
+  </section>
+
+  <!-- Teaching Section -->
+  <section id="teaching" class="bg-gray-200 py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-6 text-center">Teaching</h2>
+      <p class="text-lg leading-relaxed mb-4">
+        I teach undergraduate and graduate courses in the Department of CSE (AI & ML). My courses include:
+      </p>
+      <ul class="list-disc list-inside text-lg space-y-2">
+        <li>Machine Learning</li>
+        <li>Design and Analysis of Algorithms</li>
+        <li>Image Processing</li>
+        <li>Artificial Intelligence</li>
+        <li>Java Programming</li>
+        <li>Information Security</li>
+        <li>Computer Networks</li>
+        <li>Discrete Mathematics</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-6 text-center">Contact</h2>
+      <p class="text-lg text-center mb-4">
+        Feel free to reach out for collaborations, inquiries, or to join my research group.
+      </p>
+      <div class="text-center">
+        <p>Email: <a href="mailto:poornima1704@grietcollege.com" class="text-blue-600 hover:underline">poornima1704@grietcollege.com</a></p>
+        <p>Office: [Your Office Address, GRIET, Hyderabad]</p>
+        <p>Twitter: <a href="https://x.com/yourhandle" class="text-blue-600 hover:underline">@yourhandle</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-800 text-white py-4">
+    <div class="container mx-auto text-center">
+      <p>© 2025 Dr. E. Poornima. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript for Scroll Animation and Dynamic Publications -->
+  <script>
+    // Scroll Animation
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 60) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('text-blue-300');
+        if (link.getAttribute('href').includes(current)) {
+          link.classList.add('text-blue-300');
+        }
+      });
+    });
+
+    // Dynamic Publication List
+    let publications = [];
+    const publicationList = document.getElementById('publication-list');
+    const sortYearButton = document.getElementById('sort-year');
+    let sortDirection = 'desc'; // Default sort: descending
+
+    function renderPublications() {
+      publicationList.innerHTML = ''; // Clear existing list
+      publications.forEach(pub => {
+        const li = document.createElement('li');
+        li.className = 'publication-item';
+        li.innerHTML = `<a href="${pub.url}" class="text-blue-600 hover:underline" target="_blank">
+          ${pub.authors}, "${pub.title}," ${pub.venue}, ${pub.year}.
+        </a>`;
+        publicationList.appendChild(li);
+      });
+    }
+
+    // Fetch publications from JSON file
+    fetch('https://github.com/EdigaPoornima2020/Poornima-Image/blob/main/publications.json') // Replace with your hosted JSON URL
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to load publications');
+        }
+        return response.json();
+      })
+      .then(data => {
+        publications = data;
+        publications.sort((a, b) => b.year - a.year); // Initial sort: newest first
+        renderPublications();
+      })
+      .catch(error => {
+        console.error('Error fetching publications:', error);
+        publicationList.innerHTML = '<li class="text-red-600">Failed to load publications. Please try again later.</li>';
+      });
+
+    // Sort publications by year
+    sortYearButton.addEventListener('click', () => {
+      sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+      publications.sort((a, b) => sortDirection === 'desc' ? b.year - a.year : a.year - b.year);
+      renderPublications();
+      sortYearButton.textContent = `Sort by Year (${sortDirection === 'desc' ? 'Newest' : 'Oldest'})`;
+    });
+  </script>
+</body>
+</html>
